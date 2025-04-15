@@ -2,6 +2,7 @@ import * as dao from "./dao.js";
 import * as modulesDao from "../Modules/dao.js";
 import * as assignmentsDao from "../Assignments/dao.js";
 import * as enrollmentsDao from "../Enrollments/dao.js";
+import * as quizzesDao from "../Quizzes/dao.js";
 
 export default function CourseRoutes(app) {
   app.get("/api/courses/:courseId/modules", (req, res) => {
@@ -73,5 +74,10 @@ export default function CourseRoutes(app) {
   app.get("/api/enrollments", (req, res) => {
     const courses = enrollmentsDao.findAllEnrollments();
     res.send(courses);
+  });
+  app.get("/api/courses/:courseId/quizzes", (req, res) => {
+    const { courseId } = req.params;
+    const quizzes = quizzesDao.findQuizzesForCourse(courseId);
+    res.json(quizzes);
   });
 }

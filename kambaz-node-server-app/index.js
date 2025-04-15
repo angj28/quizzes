@@ -7,6 +7,8 @@ import session from "express-session";
 import CourseRoutes from "./Kambaz/Courses/routes.js";
 import ModuleRoutes from "./Kambaz/Modules/routes.js";
 import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
+import QuizRoutes from "./Kambaz/Quizzes/routes.js";
+import QuestionRoutes from "./Kambaz/Questions/routes.js";
 
 import "dotenv/config";
 
@@ -43,6 +45,8 @@ UserRoutes(app);
 CourseRoutes(app);
 ModuleRoutes(app);
 AssignmentRoutes(app);
+QuizRoutes(app);
+QuestionRoutes(app);
 Lab5(app);
 Hello(app);
 

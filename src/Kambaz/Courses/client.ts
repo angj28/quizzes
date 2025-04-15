@@ -85,3 +85,9 @@ export async function deleteUserFromCourse(courseId: string, userId: string) {
     throw error;
   }
 }
+export const findQuizzesForCourse = async (courseId: string) => {
+  const response = await axiosWithCredentials.get(
+    `${COURSES_API}/${courseId}/quizzes`
+  );
+  return response.data;
+};
