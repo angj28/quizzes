@@ -42,3 +42,7 @@ export const createQuestionForQuiz = async (quizId: string, question: any) => {
   );
   return response.data;
 };
+export const getQuiz = async (quizId: any) => {
+  const response = await axiosWithCredentials.get(`${QUIZZES_API}/${quizId}`);
+  return response.data;
+};

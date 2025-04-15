@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Container, Nav, Row, Col, Card, Button, Badge } from "react-bootstrap";
 import QuestionEditor from "./QuestionEditor";
 import QuestionList from "./QuestionList";
@@ -6,29 +6,31 @@ import { v4 as uuidv4 } from "uuid";
 import { Link, useParams } from "react-router";
 import * as quizzesClient from "./client";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addQuestion,
-  deleteQuestion,
-  setQuestions,
-  updateQuestion,
-} from "./questionReducer";
+import { setQuestions } from "./questionReducer";
 
-const QuizEditor: React.FC = () => {
+export default function QuizEditor() {
   const { cid, qid } = useParams();
   const [activeTab, setActiveTab] = useState<"details" | "questions">(
     "questions"
   );
-  const { questions } = useSelector((state: any) => state.questionsReducer);
+  const { questions: originalQuestions } = useSelector(
+    (state: any) => state.questionsReducer
+  );
+  const [draftQuestions, setDraftQuestions] = useState<any[]>([]);
   const [editingQuestion, setEditingQuestion] = useState<any | null>(null);
-  const [quizId, setQuizId] = useState<string>("Q101");
-  const [quizTitle, setQuizTitle] = useState<string>("Rocket Propulsion Quiz");
+  const [quizTitle, setQuizTitle] = useState<string>("");
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const dispatch = useDispatch();
 
   const fetchQuestions = async () => {
     try {
       const questions = await quizzesClient.findQuestionsForQuiz(qid as string);
+      const quiz = await quizzesClient.getQuiz(qid);
+
+      console.log("title: " + quiz.title);
       dispatch(setQuestions(questions));
+      setDraftQuestions([...questions]);
+      setQuizTitle(quiz.title);
     } catch (error) {
       console.error("Failed to load questions:", error);
     }
@@ -39,15 +41,18 @@ const QuizEditor: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const points = questions.reduce((sum: any, q: any) => sum + q.points, 0);
+    const points = draftQuestions.reduce(
+      (sum: any, q: any) => sum + q.points,
+      0
+    );
     setTotalPoints(points);
-  }, [questions]);
+  }, [draftQuestions]);
 
   const handleAddQuestion = () => {
     const newQuestion = {
       _id: uuidv4(),
-      quizId: quizId,
-      title: "Question " + (questions.length + 1),
+      quizId: qid,
+      title: "Question " + (draftQuestions.length + 1),
       questionType: "multiple-choice",
       points: 10,
       questionText: "",
@@ -57,7 +62,7 @@ const QuizEditor: React.FC = () => {
         { id: "C", text: "", isCorrect: false },
         { id: "D", text: "", isCorrect: false },
       ],
-      orderInQuiz: questions.length,
+      orderInQuiz: draftQuestions.length,
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),
     };
@@ -66,7 +71,7 @@ const QuizEditor: React.FC = () => {
   };
 
   const handleEditQuestion = (questionId: string) => {
-    const question = questions.find((q: any) => q._id === questionId);
+    const question = draftQuestions.find((q: any) => q._id === questionId);
     if (question) {
       setEditingQuestion({ ...question });
     }
@@ -74,10 +79,8 @@ const QuizEditor: React.FC = () => {
 
   const handleDeleteQuestion = async (questionId: string) => {
     if (window.confirm("Are you sure you want to delete this question?")) {
-      await quizzesClient.deleteQuestion(questionId);
-      dispatch(deleteQuestion(questionId));
+      setDraftQuestions(draftQuestions.filter((q) => q._id !== questionId));
 
-      // If currently editing this question, close editor
       if (editingQuestion && editingQuestion._id === questionId) {
         setEditingQuestion(null);
       }
@@ -85,12 +88,15 @@ const QuizEditor: React.FC = () => {
   };
 
   const handleSaveQuestion = async (question: any) => {
-    if (!questions.some((q: any) => q._id === question._id)) {
-      await quizzesClient.createQuestionForQuiz(qid as string, question);
-      dispatch(addQuestion(question));
+    const updatedList = draftQuestions.map((q) =>
+      q._id === question._id ? question : q
+    );
+
+    const isNew = !draftQuestions.find((q) => q._id === question._id);
+    if (isNew) {
+      setDraftQuestions([...draftQuestions, question]);
     } else {
-      await quizzesClient.updateQuestion(question);
-      dispatch(updateQuestion(question));
+      setDraftQuestions(updatedList);
     }
 
     setEditingQuestion(null);
@@ -100,9 +106,38 @@ const QuizEditor: React.FC = () => {
     setEditingQuestion(null);
   };
 
-  const handleSaveQuiz = () => {
-    // TODO: Implementation for saving the entire quiz
-    alert("Quiz saved successfully!");
+  const handleSaveQuiz = async () => {
+    const toCreate = draftQuestions.filter(
+      (q) => !originalQuestions.find((oq: any) => oq._id === q._id)
+    );
+
+    const toUpdate = draftQuestions.filter((q) =>
+      originalQuestions.find(
+        (oq: any) =>
+          oq._id === q._id && JSON.stringify(oq) !== JSON.stringify(q)
+      )
+    );
+
+    const toDelete = originalQuestions.filter(
+      (oq: any) => !draftQuestions.find((q) => q._id === oq._id)
+    );
+
+    try {
+      await Promise.all([
+        ...toCreate.map((q) =>
+          quizzesClient.createQuestionForQuiz(qid as string, q)
+        ),
+        ...toUpdate.map((q) => quizzesClient.updateQuestion(q)),
+        ...toDelete.map((q: any) => quizzesClient.deleteQuestion(q._id)),
+      ]);
+
+      // After syncing with server, re-fetch to update store
+      fetchQuestions();
+      alert("Quiz saved successfully!");
+    } catch (error) {
+      console.error("Error saving quiz:", error);
+      alert("Failed to save quiz. Please try again.");
+    }
   };
 
   return (
@@ -151,9 +186,8 @@ const QuizEditor: React.FC = () => {
               <Card.Body>
                 <h3>Quiz Details</h3>
                 {/* Quiz details form would go here */}
-                <p>Quiz ID: {quizId}</p>
                 <p>Quiz Title: {quizTitle}</p>
-                <p>Total Questions: {questions.length}</p>
+                <p>Total Questions: {draftQuestions.length}</p>
                 <p>Total Points: {totalPoints}</p>
               </Card.Body>
             </Card>
@@ -173,7 +207,7 @@ const QuizEditor: React.FC = () => {
                   </div>
 
                   <QuestionList
-                    questions={questions}
+                    questions={draftQuestions}
                     onEdit={handleEditQuestion}
                     onDelete={handleDeleteQuestion}
                   />
@@ -202,6 +236,4 @@ const QuizEditor: React.FC = () => {
       </Row>
     </Container>
   );
-};
-
-export default QuizEditor;
+}

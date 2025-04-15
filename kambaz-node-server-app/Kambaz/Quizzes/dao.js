@@ -21,3 +21,10 @@ export function updateQuiz(quizId, quizUpdate) {
   Object.assign(quiz, quizUpdate);
   return quiz;
 }
+export function getQuiz(quizId) {
+  const { quizzes } = Database;
+  console.log("Looking for quizId:", quizId);
+  console.log("All quizzes:", quizzes);
+  const quiz = quizzes.find((quiz) => quiz._id === quizId);
+  return quiz;
+}

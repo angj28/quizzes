@@ -26,4 +26,9 @@ export default function QuizRoutes(app) {
     const newQuestion = questionsDao.createQuestion(question);
     res.send(newQuestion);
   });
+  app.get("/api/quizzes/:quizId", (req, res) => {
+    const { quizId } = req.params;
+    const name = quizzesDao.getQuiz(quizId);
+    res.json(name);
+  });
 }

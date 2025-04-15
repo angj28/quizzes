@@ -20,9 +20,7 @@ export default function QuestionEditor({
     setFormData(question);
   }, [question]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<any>) => {
     const { name, value } = e.target;
 
     setFormData({
@@ -113,7 +111,7 @@ export default function QuestionEditor({
                 type="text"
                 name="title"
                 value={formData.title}
-                onChange={() => handleInputChange}
+                onChange={handleInputChange}
                 placeholder="Question Title"
               />
             </Form.Group>
@@ -137,7 +135,7 @@ export default function QuestionEditor({
                 name="points"
                 className="mr-2"
                 value={formData.points}
-                onChange={() => handleInputChange}
+                onChange={handleInputChange}
                 min={0}
               />
             </InputGroup>
