@@ -133,7 +133,7 @@ export default function QuizEditor() {
 
       // After syncing with server, re-fetch to update store
       fetchQuestions();
-      alert("Quiz saved successfully!");
+      setActiveTab("details");
     } catch (error) {
       console.error("Error saving quiz:", error);
       alert("Failed to save quiz. Please try again.");
@@ -219,19 +219,18 @@ export default function QuizEditor() {
                   onCancel={handleCancelEdit}
                 />
               )}
+              <Row className="mt-4 mb-5">
+                <Col className="d-flex justify-content-between">
+                  <Link to={`/Kambaz/Courses/${cid}/Quizzes`}>
+                    <Button variant="outline-secondary">Cancel</Button>
+                  </Link>
+                  <Button variant="primary" onClick={handleSaveQuiz}>
+                    Save
+                  </Button>
+                </Col>
+              </Row>
             </>
           )}
-        </Col>
-      </Row>
-
-      <Row className="mt-4 mb-5">
-        <Col className="d-flex justify-content-between">
-          <Link to={`/Kambaz/Courses/${cid}/Quizzes`}>
-            <Button variant="outline-secondary">Cancel</Button>
-          </Link>
-          <Button variant="primary" onClick={handleSaveQuiz}>
-            Save
-          </Button>
         </Col>
       </Row>
     </Container>
