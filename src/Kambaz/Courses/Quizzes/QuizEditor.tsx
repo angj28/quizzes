@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { Container, Nav, Row, Col, Card, Button, Badge } from "react-bootstrap";
+import {
+  Container,
+  Nav,
+  Row,
+  Col,
+  Card,
+  Button,
+  Badge,
+  Form,
+} from "react-bootstrap";
 import QuestionEditor from "./QuestionEditor";
 import QuestionList from "./QuestionList";
 import { v4 as uuidv4 } from "uuid";
@@ -7,6 +16,8 @@ import { Link, useParams } from "react-router";
 import * as quizzesClient from "./client";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuestions } from "./questionReducer";
+import { updateQuiz } from "./reducer";
+import { FaPencilAlt } from "react-icons/fa";
 
 export default function QuizEditor() {
   const { cid, qid } = useParams();
@@ -18,6 +29,9 @@ export default function QuizEditor() {
   );
   const [draftQuestions, setDraftQuestions] = useState<any[]>([]);
   const [editingQuestion, setEditingQuestion] = useState<any | null>(null);
+  const [quiz, setQuiz] = useState<any | null>(null);
+
+  const [editingTitle, setEditingTitle] = useState(false);
   const [quizTitle, setQuizTitle] = useState<string>("");
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const dispatch = useDispatch();
@@ -28,6 +42,7 @@ export default function QuizEditor() {
       const quiz = await quizzesClient.getQuiz(qid);
 
       console.log("title: " + quiz.title);
+      setQuiz(quiz);
       dispatch(setQuestions(questions));
       setDraftQuestions([...questions]);
       setQuizTitle(quiz.title);
@@ -47,6 +62,16 @@ export default function QuizEditor() {
     );
     setTotalPoints(points);
   }, [draftQuestions]);
+
+  const saveTitle = async () => {
+    const updatedQuiz = {
+      ...quiz,
+      title: quizTitle,
+    };
+    await quizzesClient.updateQuiz(updatedQuiz);
+    dispatch(updateQuiz(updatedQuiz));
+    setEditingTitle(false);
+  };
 
   const handleAddQuestion = () => {
     const newQuestion = {
@@ -130,8 +155,12 @@ export default function QuizEditor() {
         ...toUpdate.map((q) => quizzesClient.updateQuestion(q)),
         ...toDelete.map((q: any) => quizzesClient.deleteQuestion(q._id)),
       ]);
+      await quizzesClient.updateQuiz({
+        ...quiz,
+        points: totalPoints,
+      });
+      dispatch(updateQuiz({ ...quiz, points: totalPoints }));
 
-      // After syncing with server, re-fetch to update store
       fetchQuestions();
       setActiveTab("details");
     } catch (error) {
@@ -144,8 +173,36 @@ export default function QuizEditor() {
     <Container fluid className="mt-3">
       <Row className="mb-3">
         <Col>
-          <div className="d-flex justify-content-between align-items-center">
-            <h2>{quizTitle}</h2>
+          <div className="d-flex align-items-center mb-3">
+            {editingTitle ? (
+              <div className="d-flex w-100">
+                <Form.Control
+                  type="text"
+                  value={quizTitle}
+                  onChange={(e) => setQuizTitle(e.target.value)}
+                  autoFocus
+                  onBlur={saveTitle}
+                  onKeyPress={(e) => e.key === "Enter" && saveTitle()}
+                />
+                <Button variant="primary" className="ms-2" onClick={saveTitle}>
+                  Save
+                </Button>
+              </div>
+            ) : (
+              <>
+                <h3 className="m-0 me-2">{quizTitle}</h3>
+                <Button
+                  variant="link"
+                  className="p-0 text-decoration-none"
+                  onClick={() => {
+                    setQuizTitle(quizTitle);
+                    setEditingTitle(true);
+                  }}
+                >
+                  <FaPencilAlt className="text-primary" />
+                </Button>
+              </>
+            )}
           </div>
         </Col>
         <h4>
@@ -182,9 +239,9 @@ export default function QuizEditor() {
       <Row>
         <Col>
           {activeTab === "details" && (
-            <Card>
+            <Card style={{ minWidth: "600px" }}>
               <Card.Body>
-                <h3>Quiz Details</h3>
+                <h3 className="me-5">Quiz Details</h3>
                 {/* Quiz details form would go here */}
                 <p>Quiz Title: {quizTitle}</p>
                 <p>Total Questions: {draftQuestions.length}</p>
@@ -197,7 +254,7 @@ export default function QuizEditor() {
             <>
               {!editingQuestion ? (
                 <>
-                  <div className="mb-3">
+                  <div className="mb-3" style={{ minWidth: "600px" }}>
                     <Button
                       variant="outline-primary"
                       onClick={handleAddQuestion}

@@ -80,4 +80,13 @@ export default function CourseRoutes(app) {
     const quizzes = quizzesDao.findQuizzesForCourse(courseId);
     res.json(quizzes);
   });
+  app.post("/api/courses/:courseId/quizzes", (req, res) => {
+    const { courseId } = req.params;
+    const quiz = {
+      ...req.body,
+      course: courseId,
+    };
+    const newQuiz = quizzesDao.createQuiz(quiz);
+    res.send(newQuiz);
+  });
 }

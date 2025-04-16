@@ -31,7 +31,7 @@ export default function QuestionList({
       {questions.map((question) => (
         <Card key={question._id} className="mb-3">
           <Card.Header className="d-flex justify-content-between align-items-center">
-            <div>
+            <div className="me-4">
               {question.title} ({question.questionType})
             </div>
             <div>
