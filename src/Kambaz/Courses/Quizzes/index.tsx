@@ -24,7 +24,6 @@ export default function Quizzes() {
   const dispatch = useDispatch();
   const { quizzes } = useSelector((state: any) => state.quizzesReducer);
   const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
   const [showTitleModal, setShowTitleModal] = useState(false);
   const [newQuizTitle, setNewQuizTitle] = useState("New Quiz");
 
@@ -137,7 +136,7 @@ export default function Quizzes() {
   };
 
   const isQuizAttempted = (quiz: any) => {
-    // Check if student has attempted the quiz - would need to be implemented
+    // TODO: Check if student has attempted the quiz
     return quiz.hasOwnProperty("studentScore");
   };
 
@@ -158,19 +157,76 @@ export default function Quizzes() {
 
       {quizzes.length === 0 ? (
         <div className="alert alert-info">
-          No quizzes available. Click the "+ Quiz" button to create a new quiz.
+          No quizzes available. Click the "Add Quiz" button to create a new
+          quiz.
         </div>
       ) : (
         <ListGroup className="wd-quizzes">
           {quizzes.map((quiz: any) => (
-            <ListGroup.Item key={quiz._id} className="wd-quiz p-3">
-              <div className="d-flex align-items-center">
-                <ProtectedFaculty studentAccess={<></>}>
-                  <BsGripVertical className="me-2 fs-5 text-secondary" />
-                </ProtectedFaculty>
+            <ProtectedFaculty
+              // Faculty sees all quizzes
+              studentAccess={
+                quiz.published ? (
+                  <ListGroup.Item key={quiz._id} className="wd-quiz p-3">
+                    <div className="d-flex align-items-center">
+                      {/* Student view — no grip or publish toggle */}
+                      <div className="flex-grow-1">
+                        <div
+                          className="fw-bold mb-1"
+                          style={{ cursor: "pointer" }}
+                          onClick={() =>
+                            navigate(
+                              `/Kambaz/Courses/${cid}/quizzes/${quiz._id}`
+                            )
+                          }
+                        >
+                          {quiz.title}
+                        </div>
 
-                <div className="me-3" onClick={() => handlePublishToggle(quiz)}>
-                  <ProtectedFaculty studentAccess={<></>}>
+                        <div className="small text-muted">
+                          <span className="me-3">
+                            {getQuizAvailabilityStatus(quiz)}
+                          </span>
+                          {quiz.dueDate && (
+                            <span className="me-3">
+                              Due {new Date(quiz.dueDate).toLocaleDateString()}{" "}
+                              at{" "}
+                              {new Date(quiz.dueDate).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          )}
+                          <span className="me-3">{quiz.points || 0} pts</span>
+                          <span>
+                            {quiz.questions ? quiz.questions.length : 0}{" "}
+                            Questions
+                          </span>
+                          {isQuizAttempted(quiz) && (
+                            <span className="ms-3">
+                              <Badge bg="success">
+                                Score: {quiz.studentScore}/{quiz.points}
+                              </Badge>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </ListGroup.Item>
+                ) : (
+                  <></>
+                )
+              }
+            >
+              {/* Faculty view */}
+              <ListGroup.Item key={quiz._id} className="wd-quiz p-3">
+                <div className="d-flex align-items-center">
+                  <BsGripVertical className="me-2 fs-5 text-secondary" />
+
+                  <div
+                    className="me-3"
+                    onClick={() => handlePublishToggle(quiz)}
+                  >
                     {quiz.published ? (
                       <FaCheck
                         className="text-success fs-5"
@@ -182,51 +238,39 @@ export default function Quizzes() {
                         title="Unpublished"
                       />
                     )}
-                  </ProtectedFaculty>
-                </div>
-
-                <div className="flex-grow-1">
-                  <div
-                    className="fw-bold mb-1"
-                    style={{ cursor: "pointer" }}
-                    onClick={() =>
-                      navigate(`/Kambaz/Courses/${cid}/quizzes/${quiz._id}`)
-                    }
-                  >
-                    {quiz.title}
                   </div>
 
-                  <div className="small text-muted">
-                    <span className="me-3">
-                      {getQuizAvailabilityStatus(quiz)}
-                    </span>
-                    {quiz.dueDate && (
-                      <span className="me-3">
-                        Due {new Date(quiz.dueDate).toLocaleDateString()} at{" "}
-                        {new Date(quiz.dueDate).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    )}
-                    <span className="me-3">{quiz.points || 0} pts</span>
-                    <span>
-                      {quiz.questions ? quiz.questions.length : 0} Questions
-                    </span>
+                  <div className="flex-grow-1">
+                    <div
+                      className="fw-bold mb-1"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        navigate(`/Kambaz/Courses/${cid}/quizzes/${quiz._id}`)
+                      }
+                    >
+                      {quiz.title}
+                    </div>
 
-                    {currentUser &&
-                      currentUser.role === "STUDENT" &&
-                      isQuizAttempted(quiz) && (
-                        <span className="ms-3">
-                          <Badge bg="success">
-                            Score: {quiz.studentScore}/{quiz.points}
-                          </Badge>
+                    <div className="small text-muted">
+                      <span className="me-3">
+                        {getQuizAvailabilityStatus(quiz)}
+                      </span>
+                      {quiz.dueDate && (
+                        <span className="me-3">
+                          Due {new Date(quiz.dueDate).toLocaleDateString()} at{" "}
+                          {new Date(quiz.dueDate).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </span>
                       )}
+                      <span className="me-3">{quiz.points || 0} pts</span>
+                      <span>
+                        {quiz.questions ? quiz.questions.length : 0} Questions
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                <ProtectedFaculty studentAccess={<></>}>
                   <DropdownButton
                     align="end"
                     variant="light"
@@ -249,9 +293,9 @@ export default function Quizzes() {
                       {quiz.published ? "Unpublish" : "Publish"}
                     </Dropdown.Item>
                   </DropdownButton>
-                </ProtectedFaculty>
-              </div>
-            </ListGroup.Item>
+                </div>
+              </ListGroup.Item>
+            </ProtectedFaculty>
           ))}
         </ListGroup>
       )}

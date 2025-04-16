@@ -4,13 +4,11 @@ export default function DeleteQuestionModal({
   handleClose,
   questionId,
   deleteQuestion,
-  message,
 }: {
   show: boolean;
   handleClose: () => void;
   questionId: string;
   deleteQuestion: (quizId: string) => void;
-  message: string;
 }) {
   return (
     <Modal show={show} onHide={handleClose}>

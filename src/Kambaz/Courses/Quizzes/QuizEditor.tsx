@@ -302,7 +302,6 @@ export default function QuizEditor() {
           handleClose={() => setShowDeleteModal(false)}
           questionId={questionToDelete}
           deleteQuestion={confirmDeleteQuestion}
-          message="Are you sure you want to delete this question?"
         />
       )}
     </Container>
