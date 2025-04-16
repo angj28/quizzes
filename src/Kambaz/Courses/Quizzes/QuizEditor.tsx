@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setQuestions } from "./questionReducer";
 import { updateQuiz } from "./reducer";
 import { FaPencilAlt } from "react-icons/fa";
+import DeleteQuestionModal from "./DeleteQuestionModal";
 
 export default function QuizEditor() {
   const { cid, qid } = useParams();
@@ -34,6 +35,8 @@ export default function QuizEditor() {
   const [editingTitle, setEditingTitle] = useState(false);
   const [quizTitle, setQuizTitle] = useState<string>("");
   const [totalPoints, setTotalPoints] = useState<number>(0);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [questionToDelete, setQuestionToDelete] = useState<string | null>(null);
   const dispatch = useDispatch();
 
   const fetchQuestions = async () => {
@@ -102,13 +105,16 @@ export default function QuizEditor() {
     }
   };
 
-  const handleDeleteQuestion = async (questionId: string) => {
-    if (window.confirm("Are you sure you want to delete this question?")) {
-      setDraftQuestions(draftQuestions.filter((q) => q._id !== questionId));
+  const handleDeleteQuestion = (questionId: string) => {
+    setQuestionToDelete(questionId);
+    setShowDeleteModal(true);
+  };
 
-      if (editingQuestion && editingQuestion._id === questionId) {
-        setEditingQuestion(null);
-      }
+  const confirmDeleteQuestion = async (questionId: string) => {
+    setDraftQuestions(draftQuestions.filter((q) => q._id !== questionId));
+
+    if (editingQuestion && editingQuestion._id === questionId) {
+      setEditingQuestion(null);
     }
   };
 
@@ -290,6 +296,15 @@ export default function QuizEditor() {
           )}
         </Col>
       </Row>
+      {questionToDelete && (
+        <DeleteQuestionModal
+          show={showDeleteModal}
+          handleClose={() => setShowDeleteModal(false)}
+          questionId={questionToDelete}
+          deleteQuestion={confirmDeleteQuestion}
+          message="Are you sure you want to delete this question?"
+        />
+      )}
     </Container>
   );
 }
