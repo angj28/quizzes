@@ -198,7 +198,7 @@ export default function Quizzes() {
                             </span>
                           )}
                           <span className="me-3">{quiz.points || 0} pts</span>
-                          <span>
+                          <span className="me-3">
                             {quiz.questions ? quiz.questions.length : 0}{" "}
                             Questions
                           </span>
@@ -245,7 +245,9 @@ export default function Quizzes() {
                       className="fw-bold mb-1"
                       style={{ cursor: "pointer" }}
                       onClick={() =>
-                        navigate(`/Kambaz/Courses/${cid}/quizzes/${quiz._id}`)
+                        navigate(
+                          `/Kambaz/Courses/${cid}/quizzes/${quiz._id}/edit`
+                        )
                       }
                     >
                       {quiz.title}
@@ -265,7 +267,7 @@ export default function Quizzes() {
                         </span>
                       )}
                       <span className="me-3">{quiz.points || 0} pts</span>
-                      <span>
+                      <span className="me-3">
                         {quiz.questions ? quiz.questions.length : 0} Questions
                       </span>
                     </div>

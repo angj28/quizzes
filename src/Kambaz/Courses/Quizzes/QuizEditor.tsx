@@ -248,7 +248,7 @@ export default function QuizEditor() {
             <Card style={{ minWidth: "600px" }}>
               <Card.Body>
                 <h3 className="me-5">Quiz Details</h3>
-                {/* Quiz details form would go here */}
+                {/* TODO: Quiz details editor */}
                 <p>Quiz Title: {quizTitle}</p>
                 <p>Total Questions: {draftQuestions.length}</p>
                 <p>Total Points: {totalPoints}</p>
