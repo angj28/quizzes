@@ -136,7 +136,6 @@ export default function Quizzes() {
   };
 
   const isQuizAttempted = (quiz: any) => {
-    // TODO: Check if student has attempted the quiz
     return quiz.hasOwnProperty("studentScore");
   };
 
@@ -154,7 +153,6 @@ export default function Quizzes() {
           </Button>
         </ProtectedFaculty>
       </div>
-
       {quizzes.length === 0 ? (
         <div className="alert alert-info">
           No quizzes available. Click the "Add Quiz" button to create a new
@@ -164,12 +162,10 @@ export default function Quizzes() {
         <ListGroup className="wd-quizzes">
           {quizzes.map((quiz: any) => (
             <ProtectedFaculty
-              // Faculty sees all quizzes
               studentAccess={
                 quiz.published ? (
                   <ListGroup.Item key={quiz._id} className="wd-quiz p-3">
                     <div className="d-flex align-items-center">
-                      {/* Student view — no grip or publish toggle */}
                       <div className="flex-grow-1">
                         <div
                           className="fw-bold mb-1"
@@ -218,7 +214,6 @@ export default function Quizzes() {
                 )
               }
             >
-              {/* Faculty view */}
               <ListGroup.Item key={quiz._id} className="wd-quiz p-3">
                 <div className="d-flex align-items-center">
                   <BsGripVertical className="me-2 fs-5 text-secondary" />
@@ -272,7 +267,6 @@ export default function Quizzes() {
                       </span>
                     </div>
                   </div>
-
                   <DropdownButton
                     align="end"
                     variant="light"
@@ -294,6 +288,15 @@ export default function Quizzes() {
                     >
                       {quiz.published ? "Unpublish" : "Publish"}
                     </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={() =>
+                        navigate(
+                          `/Kambaz/Courses/${cid}/quizzes/${quiz._id}/preview`
+                        )
+                      }
+                    >
+                      Preview
+                    </Dropdown.Item>
                   </DropdownButton>
                 </div>
               </ListGroup.Item>
@@ -309,7 +312,6 @@ export default function Quizzes() {
         deleteThisQuiz={deleteThisQuiz}
         message="Are you sure you want to delete this quiz?"
       />
-      {/* Title Modal */}
       <Modal show={showTitleModal} onHide={() => setShowTitleModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>New Quiz</Modal.Title>
