@@ -3,6 +3,7 @@ const axiosWithCredentials = axios.create({ withCredentials: true });
 const REMOTE_SERVER = import.meta.env.VITE_REMOTE_SERVER;
 const QUIZZES_API = `${REMOTE_SERVER}/api/quizzes`;
 const QUESTIONS_API = `${REMOTE_SERVER}/api/questions`;
+
 export const deleteQuiz = async (quizId: string) => {
   const response = await axiosWithCredentials.delete(
     `${QUIZZES_API}/${quizId}`
