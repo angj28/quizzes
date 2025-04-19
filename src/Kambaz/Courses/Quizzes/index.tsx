@@ -154,7 +154,6 @@ export default function Quizzes() {
           </Button>
         </ProtectedFaculty>
       </div>
-
       {quizzes.length === 0 ? (
         <div className="alert alert-info">
           No quizzes available. Click the "Add Quiz" button to create a new
@@ -272,7 +271,6 @@ export default function Quizzes() {
                       </span>
                     </div>
                   </div>
-
                   <DropdownButton
                     align="end"
                     variant="light"
@@ -293,6 +291,16 @@ export default function Quizzes() {
                       onClick={() => handleQuizAction("publish", quiz)}
                     >
                       {quiz.published ? "Unpublish" : "Publish"}
+                    </Dropdown.Item>
+                    {/* === PREVIEW OPTION ADDED BELOW === */}
+                    <Dropdown.Item
+                      onClick={() =>
+                        navigate(
+                          `/Kambaz/Courses/${cid}/quizzes/${quiz._id}/preview`
+                        )
+                      }
+                    >
+                      Preview
                     </Dropdown.Item>
                   </DropdownButton>
                 </div>
