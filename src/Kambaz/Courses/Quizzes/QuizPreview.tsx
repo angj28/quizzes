@@ -1,4 +1,3 @@
-// src/Kambaz/Courses/Quizzes/QuizPreview.tsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Alert, Badge, Button, Card, Container, Form, ListGroup } from "react-bootstrap";
@@ -9,8 +8,7 @@ export default function QuizPreview() {
   const { cid, qid } = useParams();
   const navigate = useNavigate();
   
-  // State management
-  const [quiz, setQuiz] = useState<any>(null);
+  const [setQuiz] = useState<any>(null);
   const [questions, setQuestions] = useState<any[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<string, any>>({});
@@ -19,7 +17,6 @@ export default function QuizPreview() {
   const [loading, setLoading] = useState(true);
   const [startTime] = useState<Date>(new Date());
 
-  // Fetch quiz data
   useEffect(() => {
     const fetchQuizData = async () => {
       try {
@@ -37,7 +34,6 @@ export default function QuizPreview() {
     fetchQuizData();
   }, [qid]);
 
-  // Handle answer selection
   const handleAnswerChange = (questionId: string, answer: any) => {
     setUserAnswers({
       ...userAnswers,
@@ -45,14 +41,12 @@ export default function QuizPreview() {
     });
   };
 
-  // Navigation between questions
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
 
-  // Submit quiz and calculate score
   const handleSubmitQuiz = () => {
     let totalCorrectPoints = 0;
     let totalPoints = 0;
@@ -60,7 +54,6 @@ export default function QuizPreview() {
     questions.forEach(question => {
       totalPoints += question.points;
       
-      // Check answer based on question type
       const userAnswer = userAnswers[question._id];
       let isCorrect = false;
       
@@ -98,7 +91,6 @@ export default function QuizPreview() {
     setQuizSubmitted(true);
   };
 
-  // Navigate to edit screen
   const handleEditQuiz = () => {
     navigate(`/Kambaz/Courses/${cid}/quizzes/${qid}/edit`);
   };
@@ -121,7 +113,6 @@ export default function QuizPreview() {
       <hr />
 
       {!quizSubmitted ? (
-        // Quiz taking view
         <>
           <Card className="mb-4">
             <Card.Header className="d-flex justify-content-between align-items-center">
@@ -193,7 +184,6 @@ export default function QuizPreview() {
           </ListGroup>
         </>
       ) : (
-        // Quiz results view
         <>
           <Alert variant="info">
             <h4>Quiz Results</h4>
@@ -256,7 +246,6 @@ export default function QuizPreview() {
   );
 }
 
-// Helper function to render question based on type
 function renderQuestionByType(
   question: any, 
   userAnswers: Record<string, any>, 
@@ -321,7 +310,6 @@ function renderQuestionByType(
   }
 }
 
-// Helper function to get question result details
 function getQuestionResult(question: any, userAnswer: any) {
   let isCorrect = false;
   let userAnswerDisplay = userAnswer || "No answer";
