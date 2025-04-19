@@ -1,14 +1,22 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Alert, Badge, Button, Card, Container, Form, ListGroup } from "react-bootstrap";
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Container,
+  Form,
+  ListGroup,
+} from "react-bootstrap";
 import * as quizzesClient from "./client";
 import { FaPencilAlt } from "react-icons/fa";
 
 export default function QuizPreview() {
   const { cid, qid } = useParams();
   const navigate = useNavigate();
-  
-  const [setQuiz] = useState<any>(null);
+
+  const [quiz, setQuiz] = useState<any>(null);
   const [questions, setQuestions] = useState<any[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<string, any>>({});
@@ -21,8 +29,10 @@ export default function QuizPreview() {
     const fetchQuizData = async () => {
       try {
         const quizData = await quizzesClient.getQuiz(qid as string);
-        const questionData = await quizzesClient.findQuestionsForQuiz(qid as string);
-        
+        const questionData = await quizzesClient.findQuestionsForQuiz(
+          qid as string
+        );
+
         setQuiz(quizData);
         setQuestions(questionData);
         setLoading(false);
@@ -37,7 +47,7 @@ export default function QuizPreview() {
   const handleAnswerChange = (questionId: string, answer: any) => {
     setUserAnswers({
       ...userAnswers,
-      [questionId]: answer
+      [questionId]: answer,
     });
   };
 
@@ -50,25 +60,27 @@ export default function QuizPreview() {
   const handleSubmitQuiz = () => {
     let totalCorrectPoints = 0;
     let totalPoints = 0;
-    
-    questions.forEach(question => {
+
+    questions.forEach((question) => {
       totalPoints += question.points;
-      
+
       const userAnswer = userAnswers[question._id];
       let isCorrect = false;
-      
+
       switch (question.questionType) {
         case "multiple-choice":
           if (userAnswer) {
-            const correctChoice = question.choices.find((choice: any) => choice.isCorrect);
+            const correctChoice = question.choices.find(
+              (choice: any) => choice.isCorrect
+            );
             isCorrect = userAnswer === correctChoice?.id;
           }
           break;
-        
+
         case "true-false":
           isCorrect = userAnswer === question.isTrue;
           break;
-          
+
         case "fill-in-blank":
           if (userAnswer && question.correctAnswers) {
             if (question.caseSensitive) {
@@ -81,12 +93,12 @@ export default function QuizPreview() {
           }
           break;
       }
-      
+
       if (isCorrect) {
         totalCorrectPoints += question.points;
       }
     });
-    
+
     setScore(totalCorrectPoints);
     setQuizSubmitted(true);
   };
@@ -102,11 +114,17 @@ export default function QuizPreview() {
   return (
     <Container className="mt-4">
       <Alert variant="warning">
-        <i className="fas fa-eye me-2"></i> This is a preview of the published version of the quiz
+        <i className="fas fa-eye me-2"></i> This is a preview of the published
+        version of the quiz
       </Alert>
+      <h3>{quiz?.title || "Quiz Preview"}</h3>
 
       <div className="mb-3">
-        Started: {startTime.toLocaleDateString()} at {startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        Started: {startTime.toLocaleDateString()} at{" "}
+        {startTime.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
       </div>
 
       <h3>Quiz Instructions</h3>
@@ -116,23 +134,25 @@ export default function QuizPreview() {
         <>
           <Card className="mb-4">
             <Card.Header className="d-flex justify-content-between align-items-center">
-              <Form.Check 
-                type="checkbox" 
-                disabled 
+              <Form.Check
+                type="checkbox"
+                disabled
                 label={`Question ${currentQuestionIndex + 1}`}
               />
-              <Badge bg="primary">{questions[currentQuestionIndex]?.points || 0} pts</Badge>
+              <Badge bg="primary">
+                {questions[currentQuestionIndex]?.points || 0} pts
+              </Badge>
             </Card.Header>
             <Card.Body>
-              <div 
-                dangerouslySetInnerHTML={{ 
-                  __html: questions[currentQuestionIndex]?.questionText || "" 
-                }} 
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: questions[currentQuestionIndex]?.questionText || "",
+                }}
               />
-              
+
               {renderQuestionByType(
-                questions[currentQuestionIndex], 
-                userAnswers, 
+                questions[currentQuestionIndex],
+                userAnswers,
                 handleAnswerChange
               )}
             </Card.Body>
@@ -140,7 +160,11 @@ export default function QuizPreview() {
 
           <div className="d-flex justify-content-between mb-4">
             <div>
-              Quiz saved at {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              Quiz saved at{" "}
+              {new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </div>
             {currentQuestionIndex === questions.length - 1 ? (
               <Button variant="primary" onClick={handleSubmitQuiz}>
@@ -153,8 +177,8 @@ export default function QuizPreview() {
             )}
           </div>
 
-          <Button 
-            variant="outline-secondary" 
+          <Button
+            variant="outline-secondary"
             className="d-flex align-items-center mb-4"
             onClick={handleEditQuiz}
           >
@@ -164,18 +188,14 @@ export default function QuizPreview() {
           <h4>Questions</h4>
           <ListGroup className="mb-4">
             {questions.map((_, index) => (
-              <ListGroup.Item 
+              <ListGroup.Item
                 key={index}
                 action
                 active={index === currentQuestionIndex}
                 onClick={() => setCurrentQuestionIndex(index)}
                 className="d-flex align-items-center"
               >
-                <Badge 
-                  bg="secondary" 
-                  className="me-2"
-                  pill
-                >
+                <Badge bg="secondary" className="me-2" pill>
                   {index + 1}
                 </Badge>
                 Question {index + 1}
@@ -187,17 +207,20 @@ export default function QuizPreview() {
         <>
           <Alert variant="info">
             <h4>Quiz Results</h4>
-            <p>Your Score: {score} out of {questions.reduce((sum, q) => sum + q.points, 0)} points</p>
+            <p>
+              Your Score: {score} out of{" "}
+              {questions.reduce((sum, q) => sum + q.points, 0)} points
+            </p>
           </Alert>
-          
+
           <h5>Question Breakdown:</h5>
           <ListGroup className="mb-4">
             {questions.map((question, index) => {
               const userAnswer = userAnswers[question._id];
               const result = getQuestionResult(question, userAnswer);
-              
+
               return (
-                <ListGroup.Item 
+                <ListGroup.Item
                   key={question._id}
                   variant={result.isCorrect ? "success" : "danger"}
                 >
@@ -209,12 +232,12 @@ export default function QuizPreview() {
                       {result.isCorrect ? "Correct" : "Incorrect"}
                     </Badge>
                   </div>
-                  
-                  <div 
+
+                  <div
                     className="my-2"
                     dangerouslySetInnerHTML={{ __html: question.questionText }}
                   />
-                  
+
                   {!result.isCorrect && (
                     <div className="mt-2">
                       <small>
@@ -222,7 +245,8 @@ export default function QuizPreview() {
                       </small>
                       <br />
                       <small>
-                        <strong>Correct answer:</strong> {result.correctAnswerDisplay}
+                        <strong>Correct answer:</strong>{" "}
+                        {result.correctAnswerDisplay}
                       </small>
                     </div>
                   )}
@@ -230,12 +254,12 @@ export default function QuizPreview() {
               );
             })}
           </ListGroup>
-          
+
           <div className="d-flex justify-content-between mb-4">
             <Button variant="primary" onClick={() => setQuizSubmitted(false)}>
               Retake Quiz
             </Button>
-            
+
             <Button variant="outline-secondary" onClick={handleEditQuiz}>
               <FaPencilAlt className="me-2" /> Edit Quiz
             </Button>
@@ -247,12 +271,12 @@ export default function QuizPreview() {
 }
 
 function renderQuestionByType(
-  question: any, 
-  userAnswers: Record<string, any>, 
+  question: any,
+  userAnswers: Record<string, any>,
   handleAnswerChange: (id: string, answer: any) => void
 ) {
   if (!question) return null;
-  
+
   switch (question.questionType) {
     case "multiple-choice":
       return (
@@ -304,7 +328,7 @@ function renderQuestionByType(
           />
         </Form>
       );
-      
+
     default:
       return <div>Unsupported question type</div>;
   }
@@ -314,32 +338,42 @@ function getQuestionResult(question: any, userAnswer: any) {
   let isCorrect = false;
   let userAnswerDisplay = userAnswer || "No answer";
   let correctAnswerDisplay = "";
-  
+
   switch (question.questionType) {
     case "multiple-choice":
-      const correctChoice = question.choices.find((choice: any) => choice.isCorrect);
+      const correctChoice = question.choices.find(
+        (choice: any) => choice.isCorrect
+      );
       isCorrect = userAnswer === correctChoice?.id;
-      userAnswerDisplay = question.choices.find((c: any) => c.id === userAnswer)?.text || "No answer";
+      userAnswerDisplay =
+        question.choices.find((c: any) => c.id === userAnswer)?.text ||
+        "No answer";
       correctAnswerDisplay = correctChoice?.text || "No correct answer defined";
       break;
-    
+
     case "true-false":
       isCorrect = userAnswer === question.isTrue;
-      userAnswerDisplay = userAnswer === true ? "True" : userAnswer === false ? "False" : "No answer";
+      userAnswerDisplay =
+        userAnswer === true
+          ? "True"
+          : userAnswer === false
+          ? "False"
+          : "No answer";
       correctAnswerDisplay = question.isTrue ? "True" : "False";
       break;
-      
+
     case "fill-in-blank":
       if (question.caseSensitive) {
         isCorrect = question.correctAnswers.includes(userAnswer);
       } else {
         isCorrect = question.correctAnswers.some(
-          (ans: string) => ans.toLowerCase() === (userAnswer || "").toLowerCase()
+          (ans: string) =>
+            ans.toLowerCase() === (userAnswer || "").toLowerCase()
         );
       }
       correctAnswerDisplay = question.correctAnswers.join(" or ");
       break;
   }
-  
+
   return { isCorrect, userAnswerDisplay, correctAnswerDisplay };
 }
