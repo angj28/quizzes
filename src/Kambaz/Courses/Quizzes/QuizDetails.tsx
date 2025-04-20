@@ -135,19 +135,23 @@ export default function QuizAttempt() {
               <div className="d-flex justify-content-center w-100">
                 {quiz &&
                   currentUser &&
-                  attempts.length < quiz.attemptsAllowed && (
-                    <Button
-                      variant="danger"
-                      className="mb-4"
-                      onClick={() =>
-                        navigate(
-                          `/Kambaz/Courses/${cid}/Quizzes/${qid}/attempt`
-                        )
-                      }
-                    >
-                      Start Quiz
-                    </Button>
-                  )}
+                  (new Date() < new Date(quiz.dueDate) ? (
+                    attempts.length < quiz.attemptsAllowed && (
+                      <Button
+                        variant="danger"
+                        className="mb-4"
+                        onClick={() =>
+                          navigate(
+                            `/Kambaz/Courses/${cid}/Quizzes/${qid}/attempt`
+                          )
+                        }
+                      >
+                        Start Quiz
+                      </Button>
+                    )
+                  ) : (
+                    <div className="mb-4">Quiz Closed</div>
+                  ))}
               </div>
               <h5 className="mb-2">Attempt History</h5>
               {attempts.length > 0 ? (

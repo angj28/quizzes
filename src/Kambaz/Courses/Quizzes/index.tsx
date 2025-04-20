@@ -82,7 +82,7 @@ export default function Quizzes() {
     );
     await fetchQuizzes();
     setShowTitleModal(false);
-    navigate(`/Kambaz/Courses/${cid}/quizzes/${createdQuiz._id}`);
+    navigate(`/Kambaz/Courses/${cid}/quizzes/${createdQuiz._id}/edit`);
   };
 
   const handlePublishToggle = async (quiz: any) => {
@@ -102,7 +102,10 @@ export default function Quizzes() {
   const getQuizAvailabilityStatus = (quiz: any) => {
     const currentDate = new Date();
     const availableDate = new Date(quiz.availableDate);
-    const availableUntilDate = new Date(quiz.availableUntilDate);
+    const availableUntilDate = new Date(quiz.dueDate);
+    console.log("quiz: ", quiz._id);
+    console.log("available: ", availableDate);
+    console.log("available until: ", availableUntilDate);
 
     if (currentDate < availableDate) {
       return `Not available until ${availableDate.toLocaleDateString()} at ${availableDate.toLocaleTimeString(
@@ -122,7 +125,7 @@ export default function Quizzes() {
   const handleQuizAction = (action: string, quiz: any) => {
     switch (action) {
       case "edit":
-        navigate(`/Kambaz/Courses/${cid}/quizzes/${quiz._id}`);
+        navigate(`/Kambaz/Courses/${cid}/quizzes/${quiz._id}/edit`);
         break;
       case "delete":
         handleShow(quiz._id);

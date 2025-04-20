@@ -18,7 +18,7 @@ export default [
     webcamRequired: false,
     lockQuestionsAfterAnswering: false,
     dueDate: "2025-05-20T23:59:59.000Z",
-    availableDate: "2025-05-13T00:00:00.000Z",
+    availableDate: "2025-04-13T00:00:00.000Z",
     untilDate: "2025-05-27T23:59:59.000Z",
     published: true,
     author: "123", // Tony Stark's user ID
@@ -44,7 +44,7 @@ export default [
     webcamRequired: false,
     lockQuestionsAfterAnswering: false,
     dueDate: "2025-05-25T23:59:59.000Z",
-    availableDate: "2025-05-18T00:00:00.000Z",
+    availableDate: "2025-04-18T00:00:00.000Z",
     untilDate: "2025-05-30T23:59:59.000Z",
     published: false,
     author: "123",
@@ -69,7 +69,7 @@ export default [
     webcamRequired: true,
     lockQuestionsAfterAnswering: true,
     dueDate: "2025-05-22T23:59:59.000Z",
-    availableDate: "2025-05-15T00:00:00.000Z",
+    availableDate: "2025-04-15T00:00:00.000Z",
     untilDate: "2025-05-22T23:59:59.000Z",
     published: true,
     author: "123",
@@ -95,7 +95,7 @@ export default [
     webcamRequired: false,
     lockQuestionsAfterAnswering: false,
     dueDate: null, // No due date for practice quiz
-    availableDate: "2025-05-01T00:00:00.000Z",
+    availableDate: "2025-04-01T00:00:00.000Z",
     untilDate: "2025-06-30T23:59:59.000Z",
     published: true,
     author: "678", // Frodo Baggins' user ID
