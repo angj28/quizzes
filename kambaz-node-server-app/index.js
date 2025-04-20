@@ -9,9 +9,9 @@ import ModuleRoutes from "./Kambaz/Modules/routes.js";
 import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
 import QuizRoutes from "./Kambaz/Quizzes/routes.js";
 import QuestionRoutes from "./Kambaz/Questions/routes.js";
+import AttemptRoutes from "./Kambaz/Attempts/routes.js";
 
 import "dotenv/config";
-import AttemptRoutes from "./Kambaz/Attempts/routes.js";
 
 const app = express();
 app.use(

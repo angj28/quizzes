@@ -6,6 +6,7 @@ import questions from "./quizzes/questions.js";
 import enrollments from "./enrollments.js";
 import quizzes from "./quizzes/quizzes.js";
 import attempts from "./quizzes/attempts.js";
+import responses from "./quizzes/responses.js";
 export default {
   courses,
   modules,
@@ -15,4 +16,5 @@ export default {
   questions,
   quizzes,
   attempts,
+  responses,
 };

@@ -11,7 +11,7 @@ export default [
     shuffleAnswers: true,
     timeLimit: 20, // minutes
     multipleAttempts: false,
-    attemptsAllowed: 1,
+    attemptsAllowed: 2,
     showCorrectAnswers: true,
     accessCode: "", // Blank means no access code required
     oneQuestionAtATime: true,

@@ -42,21 +42,6 @@ export default [
     updatedAt: "2025-05-13T20:59:44.000Z",
   },
   {
-    _id: "AT104",
-    quizId: "Q101",
-    userId: "123", // Tony Stark (faculty) - preview attempt
-    startTime: "2025-05-12T09:10:22.000Z",
-    endTime: "2025-05-12T09:25:35.000Z",
-    timeSpent: 15.22, // minutes
-    completed: true,
-    score: 100, // out of 100
-    attemptNumber: 1,
-    maxAttempts: 1,
-    isPreview: true, // Faculty preview flag
-    createdAt: "2025-05-12T09:10:22.000Z",
-    updatedAt: "2025-05-12T09:25:35.000Z",
-  },
-  {
     _id: "AT201",
     quizId: "Q201",
     userId: "234", // Bruce Wayne (student)
@@ -104,7 +89,6 @@ export default [
     userId: "234", // Bruce Wayne (student) - second attempt
     startTime: "2025-05-08T12:10:33.000Z",
     endTime: "2025-05-08T12:15:22.000Z",
-    timeSpent: 4.82, // minutes
     completed: true,
     score: null, // Practice quiz, no score
     attemptNumber: 2,
