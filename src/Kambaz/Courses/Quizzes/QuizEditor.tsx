@@ -1,15 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Container,
-  Nav,
-  Row,
-  Col,
-  Card,
-  Button,
-  Badge,
-  Form,
-  Table,
-} from "react-bootstrap";
+import { Container, Nav, Row, Col, Button } from "react-bootstrap";
 import QuestionEditor from "./QuestionEditor";
 import QuestionList from "./QuestionList";
 import { v4 as uuidv4 } from "uuid";
@@ -18,9 +8,10 @@ import * as quizzesClient from "./client";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuestions } from "./questionReducer";
 import { updateQuiz } from "./reducer";
-import { FaPencilAlt } from "react-icons/fa";
 import DeleteQuestionModal from "./DeleteQuestionModal";
-
+import QuizTitleEditor from "./QuizTitleEditor";
+import QuizDetailsView from "./QuizDetailsView";
+import QuizDetailsEditor from "./QuizDetailsEditor";
 
 export default function QuizEditor() {
   const { cid, qid } = useParams();
@@ -33,12 +24,14 @@ export default function QuizEditor() {
   const [draftQuestions, setDraftQuestions] = useState<any[]>([]);
   const [editingQuestion, setEditingQuestion] = useState<any | null>(null);
   const [quiz, setQuiz] = useState<any | null>(null);
+  const [editableQuiz, setEditableQuiz] = useState<any | null>(null);
 
   const [editingTitle, setEditingTitle] = useState(false);
   const [quizTitle, setQuizTitle] = useState<string>("");
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [questionToDelete, setQuestionToDelete] = useState<string | null>(null);
+  const [editingDetails, setEditingDetails] = useState(false);
   const dispatch = useDispatch();
 
   const fetchQuestions = async () => {
@@ -48,6 +41,7 @@ export default function QuizEditor() {
 
       console.log("title: " + quiz.title);
       setQuiz(quiz);
+      setEditableQuiz({ ...quiz });
       dispatch(setQuestions(questions));
       setDraftQuestions([...questions]);
       setQuizTitle(quiz.title);
@@ -68,13 +62,16 @@ export default function QuizEditor() {
     setTotalPoints(points);
   }, [draftQuestions]);
 
-  const saveTitle = async () => {
+  const saveTitle = async (newTitle: string) => {
     const updatedQuiz = {
       ...quiz,
-      title: quizTitle,
+      title: newTitle,
     };
     await quizzesClient.updateQuiz(updatedQuiz);
     dispatch(updateQuiz(updatedQuiz));
+    setQuiz(updatedQuiz);
+    setEditableQuiz(updatedQuiz);
+    setQuizTitle(newTitle);
     setEditingTitle(false);
   };
 
@@ -177,43 +174,40 @@ export default function QuizEditor() {
     }
   };
 
+  const handleEditDetails = () => {
+    setEditingDetails(true);
+  };
+
+  const handleCancelDetailsEdit = () => {
+    setEditingDetails(false);
+    setEditableQuiz({ ...quiz });
+  };
+
+  const handleSaveDetails = async (updatedQuiz: any) => {
+    try {
+      await quizzesClient.updateQuiz(updatedQuiz);
+      dispatch(updateQuiz(updatedQuiz));
+      setQuiz(updatedQuiz);
+      setEditableQuiz(updatedQuiz);
+      setEditingDetails(false);
+    } catch (error) {
+      console.error("Error saving quiz details:", error);
+      alert("Failed to save quiz details. Please try again.");
+    }
+  };
+
   return (
     <Container fluid className="mt-3">
       <Row className="mb-3">
         <Col>
-          <div className="d-flex align-items-center mb-3">
-            {editingTitle ? (
-              <div className="d-flex w-100">
-                <Form.Control
-                  type="text"
-                  value={quizTitle}
-                  onChange={(e) => setQuizTitle(e.target.value)}
-                  autoFocus
-                  onBlur={saveTitle}
-                  onKeyPress={(e) => e.key === "Enter" && saveTitle()}
-                />
-                <Button variant="primary" className="ms-2" onClick={saveTitle}>
-                  Save
-                </Button>
-              </div>
-            ) : (
-              <>
-                <h3 className="m-0 me-2">{quizTitle}</h3>
-                <Button
-                  variant="link"
-                  className="p-0 text-decoration-none"
-                  onClick={() => {
-                    setQuizTitle(quizTitle);
-                    setEditingTitle(true);
-                  }}
-                >
-                  <FaPencilAlt className="text-primary" />
-                </Button>
-              </>
-            )}
-          </div>
+          <QuizTitleEditor
+            title={quizTitle}
+            isEditing={editingTitle}
+            onStartEditing={() => setEditingTitle(true)}
+            onSave={saveTitle}
+            onCancel={() => setEditingTitle(false)}
+          />
         </Col>
-       
       </Row>
 
       <Row className="mb-3">
@@ -244,82 +238,21 @@ export default function QuizEditor() {
       {/* Content */}
       <Row>
         <Col>
-          {activeTab === "details" && (
-            <Card style={{ minWidth: "600px" }}>
-              <Card.Body>
-              <h3 className="me-5">{quiz?.title}</h3>
-              <p><strong>Quiz Type:</strong> {quiz?.quizType}</p>
-              <p><strong>Points:</strong> {totalPoints}</p>
-              <p><strong>Assignment Group:</strong> {quiz?.assignmentGroup}</p>
-              <p><strong>Shuffle Answers:</strong> {quiz?.shuffleAnswers ? "Yes" : "No"}</p>
-              <p><strong>Time Limit:</strong> {quiz?.timeLimit} Minutes</p>
-              <p><strong>Multiple Attempts:</strong> {quiz?.multipleAttempts ? "Yes" : "No"}</p>
-               {quiz?.multipleAttempts && (
-                   <p><strong>How Many Attempts:</strong> {quiz?.attemptsAllowed}</p>
-                )}
-               <p><strong>Show Correct Answers:</strong> {quiz?.showCorrectAnswers ? "Yes" : "No"}</p>
-               <p><strong>Access Code:</strong> {quiz?.accessCode || "(None)"}</p>
-               <p><strong>One Question at a Time:</strong> {quiz?.oneQuestionAtATime ? "Yes" : "No"}</p>
-               <p><strong>Webcam Required:</strong> {quiz?.webcamRequired ? "Yes" : "No"}</p>
-               <p><strong>Lock Questions After Answering:</strong> {quiz?.lockQuestionsAfterAnswering ? "Yes" : "No"}</p>
-               
-
-
-{/* Labels row */}
-<div style={{ display: "flex", fontWeight: 600, fontSize: "0.95rem" }}>
-  <div style={{ flex: 1 }}>Due</div>
-  <div style={{ flex: 1 }}>For</div>
-  <div style={{ flex: 1 }}>Available from</div>
-  <div style={{ flex: 1 }}>Until</div>
-</div>
-
-{/* Subtle divider line between label row and values */}
-<hr style={{ marginTop: "0.2rem", marginBottom: "0.5rem" }} />
-
-{/* Values row */}
-<div style={{ display: "flex", fontSize: "0.95rem" }}>
-  <div style={{ flex: 1 }}>
-    {quiz?.dueDate &&
-      new Date(quiz.dueDate).toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      })}
-  </div>
-  <div style={{ flex: 1 }}>Everyone</div>
-  <div style={{ flex: 1 }}>
-    {quiz?.availableDate &&
-      new Date(quiz.availableDate).toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      })}
-  </div>
-  <div style={{ flex: 1 }}>
-    {quiz?.untilDate &&
-      new Date(quiz.untilDate).toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      })}
-  </div>
-</div>
-
-
-
-
-
-                
-
-              </Card.Body>
-            </Card>
-          )}
+          {activeTab === "details" &&
+            (editingDetails ? (
+              <QuizDetailsEditor
+                quiz={editableQuiz}
+                onSave={handleSaveDetails}
+                onCancel={handleCancelDetailsEdit}
+                cid={cid as string}
+              />
+            ) : (
+              <QuizDetailsView
+                quiz={quiz}
+                totalPoints={totalPoints}
+                onEdit={handleEditDetails}
+              />
+            ))}
 
           {activeTab === "questions" && (
             <>
