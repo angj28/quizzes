@@ -23,6 +23,12 @@ export const findQuestionsForQuiz = async (quizId: any) => {
   );
   return response.data;
 };
+export const findAttemptsForQuiz = async (quizId: any) => {
+  const response = await axiosWithCredentials.get(
+    `${QUIZZES_API}/${quizId}/attempts`
+  );
+  return response.data;
+};
 export const deleteQuestion = async (questionId: string) => {
   const response = await axiosWithCredentials.delete(
     `${QUESTIONS_API}/${questionId}`
