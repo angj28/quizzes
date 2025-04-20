@@ -34,4 +34,9 @@ export default function AttemptRoutes(app) {
 
         res.json(savedAttempt);
     });
+
+    app.get("/api/quizzes/:qid/attempts/:uid", async (req, res) => {
+        const attempts = await attemptsDao.findAttemptsForStudent(req.params.qid, req.params.uid);
+        res.json(attempts);
+      });
 }

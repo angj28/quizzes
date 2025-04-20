@@ -8,9 +8,11 @@ import {
 } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import * as quizzesClient from "./client";
+import { useSelector } from "react-redux";
 
 export default function QuizAttempt() {
   const { qid } = useParams();
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
   const [quiz, setQuiz] = useState<any | null>(null);
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [questions, setQuestions] = useState([]);
@@ -40,15 +42,17 @@ export default function QuizAttempt() {
   useEffect(() => {
     const fetchAttempts = async () => {
       try {
-        const data = await quizzesClient.findAttemptsForQuiz(qid);
+        if (!currentUser?._id) return;
+        const data = await quizzesClient.findAttemptsForQuizByStudent(qid, currentUser._id);
         setAttempts(data);
       } catch (err) {
         console.error("Error fetching attempts", err);
       }
     };
-
+  
     fetchAttempts();
-  }, [qid]);
+  }, [qid, currentUser]);
+  
 
   return (
     <Container fluid className="mt-4">
@@ -83,7 +87,7 @@ export default function QuizAttempt() {
 
             <div className="d-flex flex-column align-items-start mt-3">
               <div className="d-flex justify-content-center w-100">
-                <Button variant="primary" className="mb-4">Start Quiz</Button>
+                <Button variant="danger" className="mb-4">Start Quiz</Button>
               </div>
               <h5 className="mb-2">Attempt History</h5>
               {attempts.length > 0 ? (

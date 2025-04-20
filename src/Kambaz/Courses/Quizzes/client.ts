@@ -23,12 +23,6 @@ export const findQuestionsForQuiz = async (quizId: any) => {
   );
   return response.data;
 };
-export const findAttemptsForQuiz = async (quizId: any) => {
-  const response = await axiosWithCredentials.get(
-    `${QUIZZES_API}/${quizId}/attempts`
-  );
-  return response.data;
-};
 export const deleteQuestion = async (questionId: string) => {
   const response = await axiosWithCredentials.delete(
     `${QUESTIONS_API}/${questionId}`
@@ -51,5 +45,11 @@ export const createQuestionForQuiz = async (quizId: string, question: any) => {
 };
 export const getQuiz = async (quizId: any) => {
   const response = await axiosWithCredentials.get(`${QUIZZES_API}/${quizId}`);
+  return response.data;
+};
+export const findAttemptsForQuizByStudent = async (quizId: any, uid: string) => {
+  const response = await axiosWithCredentials.get(
+    `${QUIZZES_API}/${quizId}/attempts/${uid}`
+  );
   return response.data;
 };
