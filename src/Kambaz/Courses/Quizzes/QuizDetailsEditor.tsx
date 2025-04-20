@@ -46,7 +46,7 @@ export default function QuizDetailsEditor({
     <Card style={{ minWidth: "600px" }}>
       <Card.Body>
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h3 className="m-0">{quiz.title}</h3>
+          <h3 className="m-2">{quiz.title}</h3>
           <div>
             <Button
               variant="outline-secondary"

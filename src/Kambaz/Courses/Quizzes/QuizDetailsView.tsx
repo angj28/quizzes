@@ -1,4 +1,5 @@
 import { Card, Button } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router";
 
 export default function QuizDetailsView({
   quiz,
@@ -10,6 +11,8 @@ export default function QuizDetailsView({
   onEdit: () => void;
 }) {
   if (!quiz) return null;
+  const navigate = useNavigate();
+  const { cid } = useParams();
 
   return (
     <Card style={{ minWidth: "600px" }}>
@@ -105,6 +108,16 @@ export default function QuizDetailsView({
                 hour12: true,
               })}
           </div>
+        </div>
+        <div className="d-flex justify-content-center mt-4">
+          <Button
+            variant="primary"
+            onClick={() =>
+              navigate(`/Kambaz/Courses/${cid}/quizzes/${quiz._id}/preview`)
+            }
+          >
+            Preview Quiz
+          </Button>
         </div>
       </Card.Body>
     </Card>
