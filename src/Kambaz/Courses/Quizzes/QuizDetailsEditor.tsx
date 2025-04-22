@@ -70,6 +70,20 @@ export default function QuizDetailsEditor({
 
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
+            <Form.Group className="mb-3">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={editableQuiz.description || ""}
+                onChange={(e) =>
+                  setEditableQuiz({
+                    ...editableQuiz,
+                    description: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
             <Form.Label>Quiz Type</Form.Label>
             <Form.Select
               value={editableQuiz.quizType || ""}

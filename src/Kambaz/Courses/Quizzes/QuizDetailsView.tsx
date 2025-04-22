@@ -25,6 +25,9 @@ export default function QuizDetailsView({
         </div>
 
         <p>
+          <strong>Description:</strong> {quiz.description || "(No description)"}
+        </p>
+        <p>
           <strong>Quiz Type:</strong> {quiz.quizType}
         </p>
         <p>
@@ -40,14 +43,15 @@ export default function QuizDetailsView({
           <strong>Time Limit:</strong> {quiz.timeLimit} Minutes
         </p>
         <p>
-  <strong>Multiple Attempts:</strong> {quiz?.multipleAttempts ? "Yes" : "No"}
-</p>
+          <strong>Multiple Attempts:</strong>{" "}
+          {quiz?.multipleAttempts ? "Yes" : "No"}
+        </p>
 
-{quiz?.multipleAttempts && (quiz?.attemptsAllowed ?? 1) > 1 && (
-  <p>
-    <strong>How Many Attempts:</strong> {quiz.attemptsAllowed}
-  </p>
-)}
+        {quiz?.multipleAttempts && (quiz?.attemptsAllowed ?? 1) > 1 && (
+          <p>
+            <strong>How Many Attempts:</strong> {quiz.attemptsAllowed}
+          </p>
+        )}
         <p>
           <strong>Show Correct Answers:</strong>{" "}
           {quiz.showCorrectAnswers ? "Yes" : "No"}

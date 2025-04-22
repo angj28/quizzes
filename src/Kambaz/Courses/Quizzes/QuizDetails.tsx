@@ -62,6 +62,7 @@ export default function QuizAttempt() {
         <Col>
           <Card.Body>
             <h3 className="mb-4">{quiz?.title}</h3>
+            <p>{quiz.description}</p>
             <hr className="my-2" />
             <div className="d-flex flex-wrap gap-4 align-items-center mb-3">
               <div>
