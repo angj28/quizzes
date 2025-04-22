@@ -118,7 +118,6 @@ export default function QuizPreview() {
         version of the quiz
       </Alert>
       <h3>{quiz?.title || "Quiz Preview"}</h3>
-      <p>{quiz.description}</p>
 
       <div className="mb-3">
         Started: {startTime.toLocaleDateString()} at{" "}
