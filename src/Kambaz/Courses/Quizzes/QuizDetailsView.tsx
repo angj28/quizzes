@@ -43,11 +43,11 @@ export default function QuizDetailsView({
           <strong>Multiple Attempts:</strong>{" "}
           {quiz.multipleAttempts ? "Yes" : "No"}
         </p>
-        {quiz.multipleAttempts && (
-          <p>
-            <strong>How Many Attempts:</strong> {quiz.attemptsAllowed}
-          </p>
-        )}
+        {quiz?.multipleAttempts ? (
+  <p><strong>How Many Attempts:</strong> {quiz?.attemptsAllowed || 1}</p>
+) : (
+  <p><strong>How Many Attempts:</strong> 1 </p>
+)}
         <p>
           <strong>Show Correct Answers:</strong>{" "}
           {quiz.showCorrectAnswers ? "Yes" : "No"}
