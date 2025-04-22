@@ -13,7 +13,7 @@ export default function Labs() {
       <div id="wd-labs">
         <h1>Labs</h1>
         <h3>
-          Jiana Ang <br /> Section 2
+          Jiana Ang, Natalie Hsu, Rachel Chen, Tiffany Wong <br /> Section 2
         </h3>
         <TOC />
         <Routes>

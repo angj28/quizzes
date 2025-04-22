@@ -93,6 +93,22 @@ export default function TOC() {
           Assignment 5 Server
         </Nav.Link>
       </Nav.Item>
+      <Nav.Item>
+        <Nav.Link
+          id="wd-github"
+          href="https://github.com/angj28/quizzes"
+        >
+          Final Project React Github
+        </Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link
+          id="wd-github"
+          href="https://github.com/angj28/quizzes/tree/main/kambaz-node-server-app"
+        >
+          Final Project Node Github
+        </Nav.Link>
+      </Nav.Item>
     </Nav>
   );
 }
