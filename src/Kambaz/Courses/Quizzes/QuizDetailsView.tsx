@@ -40,13 +40,13 @@ export default function QuizDetailsView({
           <strong>Time Limit:</strong> {quiz.timeLimit} Minutes
         </p>
         <p>
-          <strong>Multiple Attempts:</strong>{" "}
-          {quiz.multipleAttempts ? "Yes" : "No"}
-        </p>
-        {quiz?.multipleAttempts ? (
-  <p><strong>How Many Attempts:</strong> {quiz?.attemptsAllowed || 1}</p>
-) : (
-  <p><strong>How Many Attempts:</strong> 1 </p>
+  <strong>Multiple Attempts:</strong> {quiz?.multipleAttempts ? "Yes" : "No"}
+</p>
+
+{quiz?.multipleAttempts && (quiz?.attemptsAllowed ?? 1) > 1 && (
+  <p>
+    <strong>How Many Attempts:</strong> {quiz.attemptsAllowed}
+  </p>
 )}
         <p>
           <strong>Show Correct Answers:</strong>{" "}
